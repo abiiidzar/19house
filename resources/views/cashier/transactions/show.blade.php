@@ -1,0 +1,19 @@
+@extends('layouts.cashier')
+@section('title', 'Receipt '.$transaction->receipt_number)
+@section('content')
+<div class="mx-auto max-w-xl">
+    <header class="no-print mb-7 border-b border-neutral-300 pb-6"><p class="page-kicker">Register / Receipt</p><div class="mt-3 flex items-end justify-between gap-4"><div><h1>Sale complete</h1><p class="mt-2 text-sm text-neutral-500">Receipt {{ $transaction->receipt_number }}</p></div><span class="status-badge">{{ $transaction->payment_status }}</span></div></header>
+    <div class="no-print mb-4 flex justify-between text-xs font-medium uppercase tracking-[0.08em]"><a href="{{ route('cashier.transactions.index') }}" class="underline underline-offset-4">← Transactions</a><a href="{{ route('cashier.pos.index') }}" class="underline underline-offset-4">New Sale →</a></div>
+    <article id="receipt" class="border border-neutral-200 bg-white p-7 text-sm shadow-sm sm:p-10">
+        <header class="text-center"><h1 class="text-xl font-semibold tracking-[0.1em]">19HOUSE</h1><p class="mt-1 text-xs text-neutral-500">In-store purchase</p><p class="mt-1 text-xs text-neutral-500">{{ $transaction->created_at->format('d M Y, H:i') }}</p></header>
+        <div class="my-6 space-y-2 border-y border-dashed border-neutral-300 py-5"><p class="flex justify-between gap-4"><span class="text-neutral-500">Receipt</span><strong>{{ $transaction->receipt_number }}</strong></p><p class="flex justify-between gap-4"><span class="text-neutral-500">Cashier</span><span>{{ $transaction->cashier?->name ?? 'Former cashier' }}</span></p><p class="flex justify-between gap-4"><span class="text-neutral-500">Payment</span><span>{{ $transaction->payment_method }} — {{ $transaction->payment_status }}</span></p>@if($transaction->payment_reference)<p class="flex justify-between gap-4"><span class="text-neutral-500">Reference</span><span class="break-all text-right">{{ $transaction->payment_reference }}</span></p>@endif</div>
+        <div class="space-y-3">@foreach($transaction->items as $item)
+            <div class="flex justify-between gap-3"><div><p class="font-medium">{{ $item->sku_snapshot['product_name'] ?? 'Product' }}</p><p class="mt-1 text-xs text-neutral-500">{{ $item->sku_snapshot['variant_name'] ?? '' }} / {{ $item->sku_snapshot['size_name'] ?? '' }} · {{ $item->sku_snapshot['sku'] ?? '' }} × {{ $item->quantity }}</p></div><p class="whitespace-nowrap tabular-nums">Rp {{ number_format($item->price * $item->quantity, 0, ',', '.') }}</p></div>
+        @endforeach</div>
+        <div class="mt-5 space-y-1 border-t border-dashed border-neutral-300 pt-4"><div class="flex justify-between"><span>Subtotal</span><span>Rp {{ number_format($transaction->subtotal, 0, ',', '.') }}</span></div><div class="flex justify-between"><span>Discount</span><span>Rp {{ number_format($transaction->discount, 0, ',', '.') }}</span></div><div class="flex justify-between border-t pt-2 font-semibold"><span>Total</span><span>Rp {{ number_format($transaction->total, 0, ',', '.') }}</span></div>@if($transaction->payment_method === 'CASH')<div class="flex justify-between"><span>Cash</span><span>Rp {{ number_format($transaction->amount_received, 0, ',', '.') }}</span></div><div class="flex justify-between"><span>Change</span><span>Rp {{ number_format($transaction->change, 0, ',', '.') }}</span></div>@endif</div>
+        <p class="mt-8 text-center text-xs text-neutral-500">Thank you for shopping at 19HOUSE.</p>
+    </article>
+    <button type="button" onclick="window.print()" class="no-print storefront-button mt-4 w-full bg-black text-white hover:bg-neutral-800">Print Receipt</button>
+</div>
+<style>@media print { body { background: white !important; } .no-print { display: none !important; } main { padding: 0 !important; } #receipt { box-shadow: none !important; margin: 0 auto; } }</style>
+@endsection
