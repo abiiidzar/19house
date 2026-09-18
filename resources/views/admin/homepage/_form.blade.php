@@ -8,7 +8,7 @@
     <label class="block text-sm">Deskripsi singkat<textarea name="subtitle" rows="2" maxlength="500" class="mt-1 block w-full border p-3">{{ old('subtitle', $section?->subtitle) }}</textarea></label>
     <div class="grid gap-5 md:grid-cols-2">
         <label class="block text-sm">Teks tombol<input name="button_label" value="{{ old('button_label', $section?->button_label) }}" maxlength="60" placeholder="DISCOVER" class="mt-1 block w-full border p-3"></label>
-        <label class="block text-sm">Tujuan tombol (path internal)<input name="button_path" value="{{ old('button_path', $section?->button_path) }}" maxlength="255" placeholder="/shop" class="mt-1 block w-full border p-3"></label>
+        <label class="block text-sm">Tujuan tombol (path internal)<input name="button_path" value="{{ old('button_path', $section?->button_path) }}" maxlength="255" placeholder="/shop atau /#about" class="mt-1 block w-full border p-3"></label>
     </div>
     <div class="grid gap-5 md:grid-cols-2">
         <div><label class="block text-sm">Foto desktop {{ $mode === 'create' ? '*' : '' }}<input type="file" name="image" accept="image/jpeg,image/png,image/webp" {{ $mode === 'create' ? 'required' : '' }} class="mt-1 block w-full border p-3"></label>

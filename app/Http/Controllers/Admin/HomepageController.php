@@ -56,7 +56,7 @@ class HomepageController extends Controller
             'title' => ['required', 'string', 'max:180'],
             'subtitle' => ['nullable', 'string', 'max:500'],
             'button_label' => ['nullable', 'required_with:button_path', 'string', 'max:60'],
-            'button_path' => ['nullable', 'required_with:button_label', 'string', 'max:255', 'regex:/^\/(?!\/)[a-zA-Z0-9_\/.-]*$/'],
+            'button_path' => ['nullable', 'required_with:button_label', 'string', 'max:255', 'regex:~\A/(?!/)[a-zA-Z0-9_/.?&=%#-]*\z~'],
             'image' => [$newEditorial ? 'required' : 'nullable', 'image', 'mimes:jpg,jpeg,png,webp', 'max:8192'],
             'mobile_image' => ['nullable', 'image', 'mimes:jpg,jpeg,png,webp', 'max:8192'],
             'remove_image' => ['sometimes', 'boolean'],

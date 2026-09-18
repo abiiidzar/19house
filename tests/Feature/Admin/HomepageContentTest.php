@@ -89,4 +89,23 @@ class HomepageContentTest extends TestCase
             'image' => UploadedFile::fake()->image('bad.jpg', 1200, 1200),
         ]))->assertSessionHasErrors('button_path');
     }
+
+    public function test_button_path_accepts_an_internal_fragment(): void
+    {
+        Storage::fake('public');
+        $this->actingAs($this->user('admin'));
+
+        $this->put(route('admin.homepage.hero.update'), $this->fields([
+            'button_path' => '/#about',
+        ]))->assertSessionHasNoErrors();
+
+        $this->assertDatabaseHas('homepage_sections', [
+            'slot' => 'hero',
+            'button_path' => '/#about',
+        ]);
+
+        $this->get(route('home'))
+            ->assertOk()
+            ->assertSee('href="/#about"', false);
+    }
 }

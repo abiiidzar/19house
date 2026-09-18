@@ -81,60 +81,81 @@
                         <div class="mb-4 flex items-end justify-between gap-3">
                             <div>
                                 <p class="text-xs font-semibold uppercase tracking-wider text-neutral-500">Images</p>
-                                <p class="mt-1 text-xs text-neutral-400">Product photography for {{ $variant->name }}.</p>
+                                <p class="mt-1 text-xs text-neutral-400">Manage photography specifically for the {{ $variant->name }} variant.</p>
                             </div>
 
-                            <span class="text-xs text-neutral-500">{{ $variant->images->count() }} images</span>
+                            <span class="text-xs text-neutral-500">{{ $variant->images->count() }} {{ Str::plural('image', $variant->images->count()) }}</span>
                         </div>
 
                         @if($variant->images->isNotEmpty())
-                            <div class="grid grid-cols-2 gap-3 sm:grid-cols-3 lg:grid-cols-4">
+                            <div class="grid grid-cols-2 gap-3 sm:grid-cols-3">
+
                                 @foreach($variant->images as $img)
-                                    <div class="group relative aspect-[3/4] overflow-hidden border border-neutral-200 bg-neutral-100">
-                                        <img src="{{ Storage::url($img->path) }}" alt="{{ $product->name }} - {{ $variant->name }}" class="h-full w-full object-cover">
+                                    <div class="border border-neutral-200 bg-white">
 
-                                        @if($img->is_primary)
-                                            <span class="absolute left-2 top-2 bg-black px-2 py-1 text-[9px] font-medium uppercase tracking-wider text-white">Primary</span>
-                                        @else
-                                            <button type="button" wire:click="setPrimaryImage({{ $img->id }})" class="absolute inset-x-2 bottom-2 bg-black/80 px-2 py-2 text-[9px] uppercase tracking-wider text-white transition hover:bg-black">Set Primary</button>
-                                        @endif
+                                        {{-- IMAGE --}}
+                                        <div class="relative aspect-[3/4] overflow-hidden bg-neutral-100">
+                                            <img src="{{ Storage::url($img->path) }}" alt="{{ $product->name }} - {{ $variant->name }}" class="h-full w-full object-cover">
 
-                                        <button type="button" wire:click="deleteImage({{ $img->id }})" wire:confirm="Hapus gambar ini?" aria-label="Delete image" class="absolute right-2 top-2 flex h-7 w-7 items-center justify-center bg-white text-xs text-red-600 opacity-100 shadow-sm transition md:opacity-0 md:group-hover:opacity-100">×</button>
-
-                                        <div class="absolute bottom-2 right-2 flex overflow-hidden border border-neutral-200 bg-white">
-                                            <button type="button" wire:click="moveImage({{ $img->id }}, 'up')" aria-label="Move image earlier" class="flex h-7 w-7 items-center justify-center text-xs hover:bg-neutral-100">←</button>
-                                            <button type="button" wire:click="moveImage({{ $img->id }}, 'down')" aria-label="Move image later" class="flex h-7 w-7 items-center justify-center border-l border-neutral-200 text-xs hover:bg-neutral-100">→</button>
+                                            @if($img->is_primary)
+                                                <span class="absolute left-2 top-2 bg-black px-2 py-1 text-[9px] font-medium uppercase tracking-wider text-white">Primary</span>
+                                            @endif
                                         </div>
+
+                                        {{-- IMAGE ACTIONS --}}
+                                        <div class="border-t border-neutral-200">
+
+                                            @unless($img->is_primary)
+                                                <button type="button" wire:click="setPrimaryImage({{ $img->id }})" class="block w-full border-b border-neutral-200 px-3 py-2.5 text-left text-[10px] font-medium uppercase tracking-wider transition hover:bg-neutral-50">Set as Primary</button>
+                                            @endunless
+
+                                            <div class="grid grid-cols-2">
+                                                <button type="button" wire:click="moveImage({{ $img->id }}, 'up')" class="border-r border-neutral-200 px-2 py-2.5 text-[10px] uppercase tracking-wider transition hover:bg-neutral-50">← Earlier</button>
+
+                                                <button type="button" wire:click="moveImage({{ $img->id }}, 'down')" class="px-2 py-2.5 text-[10px] uppercase tracking-wider transition hover:bg-neutral-50">Later →</button>
+                                            </div>
+
+                                            <button type="button" wire:click="deleteImage({{ $img->id }})" wire:confirm="Hapus foto {{ $variant->name }} ini?" class="block w-full border-t border-neutral-200 px-3 py-2.5 text-left text-[10px] font-medium uppercase tracking-wider text-red-600 transition hover:bg-red-50">Delete Image</button>
+
+                                        </div>
+
                                     </div>
                                 @endforeach
+
                             </div>
                         @else
-                            <div class="flex aspect-[3/1] items-center justify-center border border-dashed border-neutral-300 bg-neutral-50">
-                                <p class="text-sm text-neutral-400">No images uploaded.</p>
+                            <div class="border border-dashed border-neutral-300 bg-neutral-50 px-5 py-10 text-center">
+                                <p class="text-sm font-medium">No images</p>
+                                <p class="mt-1 text-xs text-neutral-500">Upload photography for the {{ $variant->name }} variant below.</p>
                             </div>
                         @endif
 
-                        {{-- IMAGE UPLOAD --}}
+                        {{-- UPLOAD --}}
                         <form wire:submit="saveImage({{ $variant->id }})" class="mt-4 border border-dashed border-neutral-300 bg-neutral-50 p-4">
-                            <div class="flex flex-col gap-4 sm:flex-row sm:items-center">
+                            <div class="flex flex-col gap-4 sm:flex-row sm:items-end">
+
                                 <div class="flex-1">
-                                    <label class="mb-2 block text-xs font-medium uppercase tracking-wider">Upload Image</label>
+                                    <label class="mb-2 block text-xs font-medium uppercase tracking-wider">Add Image</label>
                                     <input type="file" wire:model="newImage" accept="image/*" class="w-full text-xs file:mr-3 file:border-0 file:bg-neutral-200 file:px-3 file:py-2 file:text-xs file:font-medium file:uppercase file:tracking-wider">
                                 </div>
 
-                                <button type="submit" class="bg-neutral-900 px-5 py-3 text-xs font-medium uppercase tracking-wider text-white transition hover:bg-black">Upload</button>
+                                <button type="submit" class="bg-black px-5 py-3 text-xs font-medium uppercase tracking-wider text-white transition hover:bg-neutral-800">Upload Image</button>
+
                             </div>
 
                             @if($newImagePreview)
                                 <div class="mt-4">
                                     <p class="mb-2 text-xs uppercase tracking-wider text-neutral-500">Preview</p>
-                                    <div class="aspect-[3/4] w-28 overflow-hidden border border-neutral-300 bg-white">
+
+                                    <div class="h-32 w-24 overflow-hidden border border-neutral-200 bg-white">
                                         <img src="{{ $newImagePreview }}" alt="Upload preview" class="h-full w-full object-cover">
                                     </div>
                                 </div>
                             @endif
 
-                            @error('newImage') <p class="mt-2 text-xs text-red-700">{{ $message }}</p> @enderror
+                            @error('newImage')
+                                <p class="mt-2 text-xs text-red-700">{{ $message }}</p>
+                            @enderror
                         </form>
                     </section>
 
